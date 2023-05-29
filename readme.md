@@ -4,11 +4,11 @@
 
 This is a beginner level introduction article for those who want to understand Zero Knowledge Proofs by building a small project without getting into the complected math behind it.
 
-This article assumes you know basic bash operations and have a basic understanding of solidity and have used RemixIDE in the past to build and deploy smart contracts.
+This article assumes you know basic bash operations, have a basic understanding of solidity and have used RemixIDE in the past to build and deploy smart contracts, that's it!
 
 Let's go!!
 
-Assume a math teacher has taught matrix multiplication in his class and he wants to check if all his students are able to find the dot product of a simple one by two matrix.
+Assume a math teacher has taught matrix multiplication in his class and he wants to check if all his students are able to find the dot product of a simple 1x2 matrix.
 
 ## Problem
 
@@ -30,7 +30,7 @@ solution = 12 ❌
 
 But the teacher doesn't want to check each solution by his own, so he appoints a student to verify everyone's calculation.
 
-The math teacher is a ZKP buff and want's to do the process using Zero Knowledge Proofs such that:
+The math teacher is a ZKP buff and want's to undertake the task using Zero Knowledge Proofs such that:
 
 - The verifier student should never ask for the actual matrices x and y or the solution from any student.
 - All that the verifier can ask for is a `proof` which can not be calculated back into the original values of x, y and the solution
@@ -38,7 +38,7 @@ The math teacher is a ZKP buff and want's to do the process using Zero Knowledge
 
 ## Setup
 
-We'll be using [Noir-lang](https://noir-lang.org/) for the generation and verification of the proofs so lets start with the installation
+We'll be using [Noir-lang](https://noir-lang.org/) for the generation and verification of the proofs. Lets start with the installation
 
 1. Install Noir and Nargo from your bash terminal
 
@@ -77,7 +77,7 @@ Voila, this is all the setup we need to get going!!
 
 For now, take the role of the math teacher. You have to formulate the [problem statement](#problem) into a ZK Circuit.
 
-Go to the src folder, and replace the content of the [main.nr](./src/main.nr) file with
+Go to the src folder. This is where we will write the logic for the circuit. Replace the content of the [main.nr](./src/main.nr) file with
 
 ```rust
 // main function is the entry point to the noir program
@@ -112,7 +112,7 @@ fn dotProduct(x : [Field; 2], y : [Field; 2]) -> Field {
 }
 ```
 
-cd into the `dotProduct` directory and run `nargo check`. Expect the following output
+cd into the `dotProduct` directory from your terminal and run `nargo check`. Expect the following output
 
 ```bash
 Constraint system successfully built!
@@ -138,7 +138,7 @@ solution = 8 ✅
 
 Let's get started:
 
-- Go to [Prover.toml](./Prover.toml) and put the homework down
+- Go to [Prover.toml](./Prover.toml) and put the homework down as shown
 
   ```rust
   x = ["2", "3"]
@@ -148,7 +148,7 @@ Let's get started:
 
 - To generate the proof, run `nargo prove student1`
 - It might take a while if you are doing this for the first time as nargo will download the SRS
-- Your proof is generated in the proofs directory with name [student1.proof](./proofs/student1.proof)
+- Your proof file is generated in the proofs directory with name [student1.proof](./proofs/student1.proof)
 
 ### Student2
 
@@ -176,7 +176,7 @@ You will be prompted with
 
 `Error: could not satisfy all constraints`
 
-Its not possible to generate a proof if all the assertions defined in the circuit do not satisfy.
+You can see, its not possible to generate a proof if all the assertions defined in the circuit do not satisfy.
 
 Lets correct the inputs in the [Prover.toml](./Prover.toml) file
 
@@ -186,7 +186,9 @@ y = ["3", "4"]
 solution = "11"
 ```
 
-Your proof is generated in the proofs directory with name [student2.proof](./proofs/student2.proof)
+Now try again to generate the proof, run `nargo prove student2`
+
+Proof file for Student2 will be generated in the proofs directory with name [student2.proof](./proofs/student2.proof)
 
 ## Verifier
 
@@ -232,7 +234,9 @@ This will create a new folder called `contract` with a file called [plonk_vk.sol
 
 This contract will be used to verify the proofs for our homeWork circuit. The working of the contract is beyond the purview of this humble article.
 
-For now, all you have to know is that we'll be calling the `verify(bytes calldata _proof, bytes32[] calldata _publicInputs)` external function of this contract that takes the proof and an array of publicInputs and returns a bool, which will be true if the proof is valid.
+For now, all you have to know is that we'll be calling the `verify(bytes calldata _proof, bytes32[] calldata _publicInputs)` external function from this contract that takes the proof and an array of publicInputs and returns a bool, which will be true if the proof is valid.
+
+What we are about to do is to create our ERC721 NFT contract and make it deploy an instance of `plonk_vk.sol` contract at the time of construction. Then use the `verify()` function of the `plonk_vk.sol` contract from within the NFT contract before minting an NFT.
 
 Open remix and save the `plonk_vk.sol` contract in the IDE. Create another file in the IDE called `homeWorkNFT.sol` and paste the following code:
 
@@ -278,7 +282,7 @@ contract HomeWork is ERC721 {
 }
 ```
 
-Deploy this contract, go to the safeMint() function, and paste the data inside student1.proof and send the transaction.
+Deploy this contract, copy the data from student1.proof, go to the safeMint() function of the deployed contract, paste the copied data and send the transaction.
 
 > Don't forget to append `0x` before the proof as the function accepts a bytes input. If proof = `29d5ec...`, the input will be: `0x29d5ec...`
 
@@ -288,4 +292,4 @@ If the proof is valid, you'll be able to mint a HomeWork NFT for yourself.
 
 We just deployed a smart-contract that can mint NFTs for proofs without exposing any information involved in the generation of the proof!
 
-This was a basic introduction to practical use of ZKPs without dabbling into any of the technicalities(moon math) behind it. I hope this tutorial has inspired you to learn more about ZKPs and explore it's use in your future projects.
+This was a basic introduction to practical use of ZKPs without dabbling into any of the technicalities (moon math) behind it. I hope this tutorial has inspired you to learn more about ZKPs and explore it's use in your future projects.
