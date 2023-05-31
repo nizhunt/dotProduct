@@ -3,7 +3,7 @@
 // Field is a default numeric datatype in noir
 // inputs x and y are array of length 2 and type Field ie. [Field; 2]
 // input 'solution' is a Field
-fn main(x : [Field; 2], y : [Field; 2], solution: Field) {
+fn main(x : [Field; 2], y : pub [Field; 2], solution: Field) {
 
     // calculate the dotProduct of x and y and save it into 'out'
     let out = dotProduct(x,y);
